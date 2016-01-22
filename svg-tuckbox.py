@@ -6,7 +6,9 @@
 
 # Note that CorelDraw's SVG import feature assumes a page size of 8.5 x 11.
 
-# This program requires pysvg (http://codeboje.de/pysvg/)
+# This program requires pysvg (http://codeboje.de/pysvg/).  Only version
+# 0.2.2 is supported, which can be downloaded from
+# https://pypi.python.org/pypi/pysvg
 
 # Copyright 2013, Timur Tabi
 #
@@ -63,7 +65,7 @@ def line(x1, y1, x2, y2, strokewidth = HAIRLINE, stroke = 'red'):
     # @return: a line object
     style_dict = {'stroke-width':strokewidth, 'stroke':stroke}
     myStyle = pysvg.builders.StyleBuilder(style_dict)
-    l = pysvg.shape.line(x1, y1, x2, y2)
+    l = pysvg.shape.Line(x1, y1, x2, y2)
     l.set_style(myStyle.getStyle())
 
     return l
@@ -85,7 +87,7 @@ def circle(cx, cy, r, strokewidth = HAIRLINE, stroke='red', fill='none'):
     # @return: a circle object
     style_dict = {'fill':fill, 'stroke-width':strokewidth, 'stroke':stroke}
     myStyle = pysvg.builders.StyleBuilder(style_dict)
-    c = pysvg.shape.circle(cx, cy, r)
+    c = pysvg.shape.Circle(cx, cy, r)
     c.set_style(myStyle.getStyle())
 
     return c
@@ -107,20 +109,20 @@ def arc(x1, y1, x2, y2, r, strokewidth = HAIRLINE, stroke = 'red', fill = 'none'
     # @return: a circle object
     style_dict = {'fill':fill, 'stroke-width':strokewidth, 'stroke':stroke}
     myStyle = pysvg.builders.StyleBuilder(style_dict)
-    p = pysvg.shape.path("M %s,%s" % (x1, y1))
+    p = pysvg.shape.Path("M %s,%s" % (x1, y1))
     p.appendArcToPath((x2 - x1) / 2, r, x2, y2, sweep_flag = sweep, relative = False)
     p.set_style(myStyle.getStyle())
 
     return p
 
 parser = OptionParser(usage="usage: %prog [options]")
-parser.add_option("-H", dest="h", help="card height", type="float", default = 3)
-parser.add_option("-W", dest="w", help="card width", type="float", default = 2)
-parser.add_option("-T", dest="t", help="card thickness", type="float", default = 0.5)
+parser.add_option("-H", dest="h", help="card height (in inches)", type="float", default = 3)
+parser.add_option("-W", dest="w", help="card width (in inches)", type="float", default = 2)
+parser.add_option("-T", dest="t", help="deck thickness (in inches)", type="float", default = 0.5)
 
 (o, a) = parser.parse_args()
 
-svg = pysvg.structure.svg(width='%sin' % WIDTH, height='%sin' % HEIGHT)
+svg = pysvg.structure.Svg(width='%sin' % WIDTH, height='%sin' % HEIGHT)
 svg.set_viewBox('0 0 %s %s' % (WIDTH, HEIGHT))
 
 # Left edge of flaps 1 and 4
@@ -191,4 +193,4 @@ svg.addElement(line(o.t, o.t + o.h, o.t, o.t + o.h + o.t * 1.5))
 svg.addElement(arc(o.t, o.t + o.h + o.t * 1.5, o.t + o.w,
         o.t + o.h + o.t * 1.5, o.w * 0.25))
 
-svg.save('/Users/timur/Documents/LaserCutter/line.svg')
+svg.save('tuckbox.svg')
